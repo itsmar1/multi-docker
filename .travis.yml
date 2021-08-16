@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t marwan/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true marwan/react-test npm test
+
+after_success:
+  - docker build -t marwan/multi-client ./client
+  - docker build -t marwan/multi-nginx ./nginx
+  - docker build -t marwan/multi-server ./server
+  - docker build -t marwan/multi-worker ./worker
+  # Log in to the Docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push marwan/multi-client
+  - docker push marwan/multi-nginx
+  - docker push marwan/multi-server
+  - docker push marwan/multi-worker
