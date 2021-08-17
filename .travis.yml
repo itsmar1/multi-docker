@@ -20,4 +20,3 @@ after_success:
   - docker push marwan/multi-nginx
   - docker push marwan/multi-server
   - docker push marwan/multi-worker
-  
